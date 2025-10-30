@@ -44,7 +44,7 @@ app.use("/api/order", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Hello from E-Commerce backend");
+  res.send("Hello from Fashion Cart E-Commerce backend - CORS Fixed!");
 });
 
 app.listen(PORT, () => {
