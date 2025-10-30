@@ -22,9 +22,7 @@ const corsOptions = {
     "http://localhost:3000", 
     "http://localhost:3001",
     "https://fashion-cart-ecommerce.vercel.app",
-    "https://fashion-cart-ecommerce-production-bfbc.up.railway.app",
-    "https://fashion-cart-ecommerce-production.up.railway.app",
-    "https://fashion-cart-ecommerce-production-893f.up.railway.app"
+    "https://fashion-cart-ecommerce-production.up.railway.app"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
