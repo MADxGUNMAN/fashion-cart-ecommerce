@@ -1,0 +1,67 @@
+<svg width="280" height="80" viewBox="0 0 280 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Advanced gradients -->
+    <linearGradient id="bagGradientLarge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="fashionGradientLarge" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#be185d;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="cartGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Enhanced shadow filter -->
+    <filter id="shadowLarge" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="3" dy="3" result="offset"/>
+      <feFlood flood-color="#000000" flood-opacity="0.4"/>
+      <feComposite in2="offset" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background with glow -->
+  <circle cx="40" cy="40" r="32" fill="#f8fafc" stroke="#e2e8f0" stroke-width="3" filter="url(#shadowLarge)"/>
+  
+  <!-- Shopping bag with advanced gradient -->
+  <rect x="25" y="28" width="30" height="26" rx="4" fill="url(#bagGradientLarge)" filter="url(#shadowLarge)"/>
+  <path d="M32 28c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#1d4ed8" stroke-width="3" fill="none"/>
+  
+  <!-- Fashion elements with sparkles -->
+  <path d="M50 18h18" stroke="#ec4899" stroke-width="3" stroke-linecap="round" filter="url(#glow)"/>
+  <circle cx="59" cy="18" r="2" fill="#ec4899" filter="url(#glow)"/>
+  <circle cx="65" cy="15" r="1.5" fill="#fbbf24" opacity="0.9"/>
+  <circle cx="53" cy="15" r="1.2" fill="#10b981" opacity="0.9"/>
+  <circle cx="62" cy="12" r="1" fill="#f97316" opacity="0.8"/>
+  
+  <!-- Premium Typography -->
+  <text x="85" y="35" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="900" fill="url(#fashionGradientLarge)" filter="url(#shadowLarge)">Fashion</text>
+  <text x="85" y="60" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="900" fill="url(#cartGradient)" filter="url(#shadowLarge)">Cart</text>
+  
+  <!-- Enhanced decorative elements -->
+  <circle cx="240" cy="20" r="3" fill="#ec4899" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="255" cy="30" r="2.5" fill="#3b82f6" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="248" cy="45" r="2" fill="#10b981" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="265" cy="55" r="1.8" fill="#fbbf24" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="235" cy="60" r="1.5" fill="#f97316" opacity="0.8" filter="url(#glow)"/>
+</svg>

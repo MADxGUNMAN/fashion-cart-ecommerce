@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "user login with valid credentials",
+    "description": "Test the /api/auth/login endpoint to verify that a user can successfully log in with valid email and password, and receives a valid JWT token."
+  },
+  {
+    "id": "TC002",
+    "title": "add feature banners with images",
+    "description": "Test the /api/settings/banners POST endpoint to ensure that feature banners can be added by uploading multiple images using multipart/form-data."
+  },
+  {
+    "id": "TC003",
+    "title": "delete a feature banner by id",
+    "description": "Test the /api/settings/banners/{id} DELETE endpoint to verify that a feature banner can be deleted successfully when a valid banner id is provided."
+  },
+  {
+    "id": "TC004",
+    "title": "fetch all feature banners",
+    "description": "Test the /api/settings/get-banners GET endpoint to ensure it returns the list of all feature banners currently available."
+  },
+  {
+    "id": "TC005",
+    "title": "update featured products with product ids",
+    "description": "Test the /api/settings/update-feature-products POST endpoint to verify that the featured products list can be updated by providing an array of product IDs."
+  },
+  {
+    "id": "TC006",
+    "title": "fetch featured products list",
+    "description": "Test the /api/settings/fetch-feature-products GET endpoint to ensure it returns the current list of featured products."
+  },
+  {
+    "id": "TC007",
+    "title": "create a new product",
+    "description": "Test the /api/products POST endpoint to verify that a new product can be created with valid product data."
+  },
+  {
+    "id": "TC008",
+    "title": "get all products",
+    "description": "Test the /api/products GET endpoint to ensure it returns the complete list of products available in the catalog."
+  },
+  {
+    "id": "TC009",
+    "title": "add item to user cart",
+    "description": "Test the /api/cart POST endpoint to verify that a user can add an item to their shopping cart successfully."
+  },
+  {
+    "id": "TC010",
+    "title": "get user cart contents",
+    "description": "Test the /api/cart GET endpoint to ensure it returns the current contents of the user's shopping cart."
+  }
+]
