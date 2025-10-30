@@ -13,6 +13,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Create uploads directory for multer
+RUN mkdir -p uploads
+
 # Generate Prisma client and build
 RUN npx prisma generate && npm run build
 
