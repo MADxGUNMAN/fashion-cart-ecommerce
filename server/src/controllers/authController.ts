@@ -23,17 +23,20 @@ async function setTokens(
   accessToken: string,
   refreshToken: string
 ) {
-  res.cookie("accessToken", accessToken, {
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
+    domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+  };
+
+  res.cookie("accessToken", accessToken, {
+    ...cookieOptions,
     maxAge: 60 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    maxAge: 7 * 24 * 60 * 60,
+    ...cookieOptions,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 }
 
@@ -158,16 +161,15 @@ export const refreshAccessToken = async (
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
-  res.clearCookie("accessToken", {
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  });
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  });
+    sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
+    domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+  };
+
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
   res.json({
     success: true,
     message: "User logged out successfully",
