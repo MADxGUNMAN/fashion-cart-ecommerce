@@ -13,7 +13,7 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
-    "NEXT_PUBLIC_CLIENT_URL": "@next_public_client_url"
+    "NEXT_PUBLIC_API_URL": "https://fashion-cart-ecommerce-production.up.railway.app",
+    "NEXT_PUBLIC_CLIENT_URL": "https://your-vercel-app.vercel.app"
   }
 }
