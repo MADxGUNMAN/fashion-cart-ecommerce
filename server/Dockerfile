@@ -20,7 +20,7 @@ RUN npx prisma generate && npm run build
 RUN npm prune --production
 
 # Expose port
-EXPOSE 5000
+EXPOSE 3001
 
 # Start the application
 CMD ["npm", "start"]
