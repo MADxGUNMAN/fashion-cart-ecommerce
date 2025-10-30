@@ -26,13 +26,13 @@ async function setTokens(
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 60 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60,
   });
 }
@@ -158,8 +158,16 @@ export const refreshAccessToken = async (
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
   res.json({
     success: true,
     message: "User logged out successfully",
