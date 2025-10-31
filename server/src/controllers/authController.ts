@@ -109,6 +109,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         email: extractCurrentUser.email,
         role: extractCurrentUser.role,
       },
+      accessToken: accessToken, // Include token in response for frontend storage
     });
   } catch (error) {
     console.error(error);

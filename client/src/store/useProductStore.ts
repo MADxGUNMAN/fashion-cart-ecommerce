@@ -1,6 +1,7 @@
 import { API_ROUTES } from "@/utils/api";
 import axios from "axios";
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 export interface Product {
   id: string;
@@ -70,6 +71,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
   createProduct: async (productData: FormData) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.PRODUCTS}/create-new-product`,
         productData,
@@ -77,6 +79,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
+            ...authHeaders,
           },
         }
       );

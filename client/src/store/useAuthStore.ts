@@ -68,7 +68,11 @@ export const useAuthStore = create<AuthStore>()(
             password,
           });
 
-          set({ isLoading: false, user: response.data.user });
+          set({ 
+            isLoading: false, 
+            user: response.data.user,
+            accessToken: response.data.accessToken 
+          });
           return true;
         } catch (error) {
           set({
@@ -85,7 +89,7 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true, error: null });
         try {
           await axiosInstance.post("/logout");
-          set({ user: null, isLoading: false });
+          set({ user: null, accessToken: null, isLoading: false });
         } catch (error) {
           set({
             isLoading: false,
@@ -115,7 +119,7 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: "auth-storage",
-      partialize: (state) => ({ user: state.user }),
+      partialize: (state) => ({ user: state.user, accessToken: state.accessToken }),
     }
   )
 );

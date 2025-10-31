@@ -1,6 +1,7 @@
 import { API_ROUTES } from "@/utils/api";
 import axios from "axios";
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 interface FeatureBanner {
   id: string;
@@ -65,7 +66,11 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const formData = new FormData();
-      files.forEach((file) => formData.append("images", file));
+      files.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.SETTINGS}/banners`,
         formData,
@@ -73,6 +78,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
+            ...authHeaders,
           },
         }
       );
@@ -83,17 +89,20 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       return response.data.success;
     } catch (e) {
       console.error(e);
-      set({ error: "Failed to fetch banners", isLoading: false });
+      set({ isLoading: false, error: "Failed to add banners" });
+      return false;
     }
   },
   updateFeaturedProducts: async (productIds: string[]) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.SETTINGS}/update-feature-products`,
         { productIds },
         {
           withCredentials: true,
+          headers: authHeaders,
         }
       );
       set({
