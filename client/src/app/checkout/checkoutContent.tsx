@@ -44,11 +44,25 @@ function CheckoutContent() {
   const { user } = useAuthStore();
   const router = useRouter();
 
+  // Check authentication
   useEffect(() => {
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
     fetchCoupons();
     fetchAddresses();
     fetchCart();
-  }, [fetchAddresses, fetchCart, fetchCoupons]);
+  }, [user, fetchAddresses, fetchCart, fetchCoupons, router]);
+
+  // Show loading if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const findDefaultAddress = addresses.find((address) => address.isDefault);
