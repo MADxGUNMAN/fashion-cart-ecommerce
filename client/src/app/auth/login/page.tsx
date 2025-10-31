@@ -48,15 +48,27 @@ function LoginPage() {
       toast({
         title: "Login Successfull!",
       });
-      // Get user data after login
-      const { user } = useAuthStore.getState();
-      console.log("User after login:", user); // Debug log
       
-      if (user?.role === "SUPER_ADMIN") {
-        router.push("/super-admin");
-      } else {
-        router.push("/home");
-      }
+      // Wait a moment for state to update, then get user data
+      setTimeout(() => {
+        const { user } = useAuthStore.getState();
+        console.log("User after login:", user); // Debug log
+        console.log("User role:", user?.role); // Debug role
+        
+        const targetPath = user?.role === "SUPER_ADMIN" ? "/super-admin" : "/home";
+        console.log("Redirecting to:", targetPath);
+        
+        // Try router.push first
+        router.push(targetPath);
+        
+        // Fallback with window.location after a short delay
+        setTimeout(() => {
+          console.log("Fallback redirect using window.location");
+          window.location.href = targetPath;
+        }, 500);
+      }, 100); // Small delay to ensure state is updated
+    } else {
+      console.log("Login failed");
     }
   };
   return (
