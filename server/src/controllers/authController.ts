@@ -27,7 +27,7 @@ async function setTokens(
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
-    domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+    // Remove domain restriction to allow cookies to work
   };
 
   res.cookie("accessToken", accessToken, {
@@ -98,8 +98,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       extractCurrentUser.role
     );
 
-    //set out tokens
+    //set out tokens (for middleware)
     await setTokens(res, accessToken, refreshToken);
+    
+    // Also store refresh token in database for user
+    await prisma.user.update({
+      where: { id: extractCurrentUser.id },
+      data: { refreshToken: refreshToken }
+    });
+    
     res.status(200).json({
       success: true,
       message: "Login successfully",
@@ -166,7 +173,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
-    domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+    // Remove domain restriction to allow cookies to work
   };
 
   res.clearCookie("accessToken", cookieOptions);

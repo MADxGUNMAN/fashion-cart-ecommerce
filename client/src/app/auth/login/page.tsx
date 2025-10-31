@@ -48,9 +48,15 @@ function LoginPage() {
       toast({
         title: "Login Successfull!",
       });
-      const user = useAuthStore.getState().user;
-      if (user?.role === "SUPER_ADMIN") router.push("/super-admin");
-      else router.push("/home");
+      // Get user data after login
+      const { user } = useAuthStore.getState();
+      console.log("User after login:", user); // Debug log
+      
+      if (user?.role === "SUPER_ADMIN") {
+        router.push("/super-admin");
+      } else {
+        router.push("/home");
+      }
     }
   };
   return (
