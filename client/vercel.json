@@ -1,17 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
   "env": {
     "NEXT_PUBLIC_API_URL": "https://fashion-cart-ecommerce-production.up.railway.app",
     "NEXT_PUBLIC_CLIENT_URL": "https://fashion-cart-ecommerce.vercel.app"
