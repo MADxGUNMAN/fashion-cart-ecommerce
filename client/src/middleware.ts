@@ -9,6 +9,11 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
   const { pathname } = request.nextUrl;
 
+  // Skip middleware for API routes and static files
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.')) {
+    return NextResponse.next();
+  }
+
   if (accessToken) {
     try {
       const { payload } = await jwtVerify(
@@ -79,6 +84,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Temporarily disable middleware to test redirect
-  matcher: [],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
