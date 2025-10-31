@@ -25,8 +25,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Address, useAddressStore } from "@/store/useAddressStore";
 import { useOrderStore } from "@/store/useOrderStore";
 import { useReviewStore } from "@/store/useReviewStore";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const initialAddressFormState = {
@@ -40,24 +38,6 @@ const initialAddressFormState = {
 };
 
 function UserAccountPage() {
-  const { user } = useAuthStore();
-  const router = useRouter();
-  
-  // Check authentication
-  useEffect(() => {
-    if (!user) {
-      router.push("/auth/login");
-    }
-  }, [user, router]);
-
-  // Show loading if not authenticated
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div>Loading...</div>
-      </div>
-    );
-  }
 
   const {
     isLoading: addressesLoading,

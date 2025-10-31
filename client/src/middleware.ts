@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const publicRoutes = ["/auth/register", "/auth/login", "/", "/home", "/listing", "/cart", "/terms"];
-const protectedUserRoutes = ["/account", "/checkout"];
+const publicRoutes = ["/auth/register", "/auth/login", "/", "/home", "/listing", "/cart", "/terms", "/account", "/checkout"];
 const superAdminRoutes = ["/super-admin"];
 const userRoutes = ["/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms"];
 
@@ -88,9 +87,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if route requires authentication
-  const isProtectedUserRoute = protectedUserRoutes.some(route => pathname.startsWith(route));
-  
-  if (isProtectedUserRoute || !publicRoutes.includes(pathname)) {
+  if (!publicRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
