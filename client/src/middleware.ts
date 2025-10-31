@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const publicRoutes = ["/auth/register", "/auth/login"];
-const superAdminRoutes = ["/super-admin", "/super-admim/:path*"];
-const userRoutes = ["/home"];
+const publicRoutes = ["/auth/register", "/auth/login", "/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms"];
+const superAdminRoutes = ["/super-admin"];
+const userRoutes = ["/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms"];
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
