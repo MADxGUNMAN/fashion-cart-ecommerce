@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const publicRoutes = ["/auth/register", "/auth/login", "/", "/home"];
-const protectedRoutes = ["/super-admin"];
-const superAdminRoutes = ["/super-admin"];
+const publicRoutes = ["/auth/register", "/auth/login"];
+const superAdminRoutes = ["/super-admin", "/super-admim/:path*"];
+const userRoutes = ["/home"];
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
   const { pathname } = request.nextUrl;
-
-  // Skip middleware for API routes and static files
-  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.')) {
-    return NextResponse.next();
-  }
 
   if (accessToken) {
     try {
@@ -33,15 +28,15 @@ export async function middleware(request: NextRequest) {
         );
       }
 
-      // Redirect super admin users away from regular user pages to admin panel
-      if (role === "SUPER_ADMIN" && pathname === "/home") {
+      if (
+        role === "SUPER_ADMIN" &&
+        userRoutes.some((route) => pathname.startsWith(route))
+      ) {
         return NextResponse.redirect(new URL("/super-admin", request.url));
       }
-      
-      // Block non-super-admin users from admin routes
       if (
         role !== "SUPER_ADMIN" &&
-        superAdminRoutes.some((route: string) => pathname.startsWith(route))
+        superAdminRoutes.some((route) => pathname.startsWith(route))
       ) {
         return NextResponse.redirect(new URL("/home", request.url));
       }
@@ -49,14 +44,34 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     } catch (e) {
       console.error("Token verification failed", e);
-      // For cross-origin setup, just allow access if token verification fails
-      // The backend will handle authentication for API calls
-      return NextResponse.next();
+      const refreshResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/refresh-token`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+
+      if (refreshResponse.ok) {
+        const response = NextResponse.next();
+        response.cookies.set(
+          "accessToken",
+          refreshResponse.headers.get("Set-Cookie") || ""
+        );
+        return response;
+      } else {
+        //ur refresh is also failed
+        const response = NextResponse.redirect(
+          new URL("/auth/login", request.url)
+        );
+        response.cookies.delete("accessToken");
+        response.cookies.delete("refreshToken");
+        return response;
+      }
     }
   }
 
-  // Only redirect to login for protected routes when no token is present
-  if (protectedRoutes.some((route: string) => pathname.startsWith(route))) {
+  if (!publicRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
@@ -64,5 +79,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // Temporarily disable middleware to test redirect
+  matcher: [],
 };
