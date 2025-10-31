@@ -49,16 +49,18 @@ function LoginPage() {
         title: "Login Successfull!",
       });
       
-      // Get user data and redirect immediately
-      const { user } = useAuthStore.getState();
-      console.log("User after login:", user);
-      console.log("User role:", user?.role);
-      
-      const targetPath = user?.role === "SUPER_ADMIN" ? "/super-admin" : "/";
-      console.log("Redirecting to:", targetPath);
-      
-      // Use window.location for reliable redirect
-      window.location.href = targetPath;
+      // Wait a bit for the store to update, then redirect
+      setTimeout(() => {
+        const { user } = useAuthStore.getState();
+        console.log("User after login:", user);
+        console.log("User role:", user?.role);
+        
+        const targetPath = user?.role === "SUPER_ADMIN" ? "/super-admin" : "/";
+        console.log("Redirecting to:", targetPath);
+        
+        // Use router.push instead of window.location for better Next.js handling
+        router.push(targetPath);
+      }, 500); // Wait 500ms for store to update
     } else {
       console.log("Login failed");
     }

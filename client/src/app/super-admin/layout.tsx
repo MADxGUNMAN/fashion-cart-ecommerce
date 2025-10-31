@@ -9,19 +9,43 @@ import { useRouter } from "next/navigation";
 
 function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is authenticated and has SUPER_ADMIN role
-    if (!user || user.role !== "SUPER_ADMIN") {
-      router.push("/auth/login");
-    }
+    // Give some time for the store to hydrate from localStorage
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      
+      // Check if user is authenticated and has SUPER_ADMIN role
+      if (!user || user.role !== "SUPER_ADMIN") {
+        console.log("No user or not SUPER_ADMIN, redirecting to login");
+        router.push("/auth/login");
+      } else {
+        console.log("User authenticated as SUPER_ADMIN:", user);
+      }
+    }, 1000); // Wait 1 second for store to hydrate
+
+    return () => clearTimeout(timer);
   }, [user, router]);
+
+  // Show loading while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
+  }
 
   // Show loading or redirect if not authorized
   if (!user || user.role !== "SUPER_ADMIN") {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div>Redirecting...</div>
+      </div>
+    );
   }
 
   return (
