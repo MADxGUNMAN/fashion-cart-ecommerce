@@ -78,9 +78,13 @@ export const createPaypalOrder = async (
       const inrPrice = item.product?.price || item.price;
       const convertedPrice = useUSD ? (inrPrice * conversionRate).toFixed(2) : inrPrice.toFixed(2);
       
+      // Ensure name is not empty - PayPal requires a valid name
+      const productName = item.product?.name || item.name || "Product";
+      const finalName = productName.trim() || "Product"; // Fallback if name is empty or just whitespace
+      
       return {
-        name: item.product?.name || item.name,
-        description: item.product?.description || item.description || "",
+        name: finalName,
+        description: item.product?.description || item.description || "Product description",
         sku: item.product?.id || item.id,
         unit_amount: {
           currency_code: currencyCode,
