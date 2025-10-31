@@ -2,6 +2,7 @@ import { API_ROUTES } from "@/utils/api";
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 export interface CartItem {
   id: string;
@@ -29,11 +30,13 @@ export const useCartStore = create<CartStore>((set, get) => {
   const debounceUpdateCartItemQuantity = debounce(
     async (id: string, quantity: number) => {
       try {
+        const authHeaders = useAuthStore.getState().getAuthHeaders();
         await axios.put(
           `${API_ROUTES.CART}/update/${id}`,
           { quantity },
           {
             withCredentials: true,
+            headers: authHeaders,
           }
         );
       } catch (e) {
@@ -49,8 +52,10 @@ export const useCartStore = create<CartStore>((set, get) => {
     fetchCart: async () => {
       set({ isLoading: true, error: null });
       try {
+        const authHeaders = useAuthStore.getState().getAuthHeaders();
         const response = await axios.get(`${API_ROUTES.CART}/fetch-cart`, {
           withCredentials: true,
+          headers: authHeaders,
         });
 
         set({ items: response.data.data, isLoading: false });
@@ -61,11 +66,13 @@ export const useCartStore = create<CartStore>((set, get) => {
     addToCart: async (item) => {
       set({ isLoading: true, error: null });
       try {
+        const authHeaders = useAuthStore.getState().getAuthHeaders();
         const response = await axios.post(
           `${API_ROUTES.CART}/add-to-cart`,
           item,
           {
             withCredentials: true,
+            headers: authHeaders,
           }
         );
 
@@ -80,8 +87,10 @@ export const useCartStore = create<CartStore>((set, get) => {
     removeFromCart: async (id) => {
       set({ isLoading: true, error: null });
       try {
+        const authHeaders = useAuthStore.getState().getAuthHeaders();
         await axios.delete(`${API_ROUTES.CART}/remove/${id}`, {
           withCredentials: true,
+          headers: authHeaders,
         });
 
         set((state) => ({
@@ -104,11 +113,13 @@ export const useCartStore = create<CartStore>((set, get) => {
     clearCart: async () => {
       set({ isLoading: true, error: null });
       try {
+        const authHeaders = useAuthStore.getState().getAuthHeaders();
         await axios.post(
           `${API_ROUTES.CART}/clear-cart`,
           {},
           {
             withCredentials: true,
+            headers: authHeaders,
           }
         );
 

@@ -35,8 +35,10 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   fetchBanners: async () => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(`${API_ROUTES.SETTINGS}/get-banners`, {
         withCredentials: true,
+        headers: authHeaders,
       });
       set({ banners: response.data.banners, isLoading: false });
     } catch (e) {
@@ -47,10 +49,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   fetchFeaturedProducts: async () => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(
         `${API_ROUTES.SETTINGS}/fetch-feature-products`,
         {
           withCredentials: true,
+          headers: authHeaders,
         }
       );
       set({
@@ -117,10 +121,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   deleteBanner: async (bannerId: string) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.delete(
         `${API_ROUTES.SETTINGS}/banners/${bannerId}`,
         {
           withCredentials: true,
+          headers: authHeaders,
         }
       );
       set({ isLoading: false });

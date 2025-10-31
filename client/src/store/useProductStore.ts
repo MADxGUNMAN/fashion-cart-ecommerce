@@ -56,10 +56,12 @@ export const useProductStore = create<ProductState>((set, get) => ({
   fetchAllProductsForAdmin: async () => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(
         `${API_ROUTES.PRODUCTS}/fetch-admin-products`,
         {
           withCredentials: true,
+          headers: authHeaders,
         }
       );
 
@@ -99,6 +101,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
+            ...useAuthStore.getState().getAuthHeaders(),
           },
         }
       );
@@ -111,8 +114,10 @@ export const useProductStore = create<ProductState>((set, get) => ({
   deleteProduct: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.delete(`${API_ROUTES.PRODUCTS}/${id}`, {
         withCredentials: true,
+        headers: authHeaders,
       });
       set({ isLoading: false });
       return response.data.success;
@@ -123,8 +128,10 @@ export const useProductStore = create<ProductState>((set, get) => ({
   getProductById: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(`${API_ROUTES.PRODUCTS}/${id}`, {
         withCredentials: true,
+        headers: authHeaders,
       });
       set({ isLoading: false });
       return response.data;
