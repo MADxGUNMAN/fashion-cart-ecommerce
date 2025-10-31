@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const publicRoutes = ["/auth/register", "/auth/login"];
-const superAdminRoutes = ["/super-admin", "/super-admim/:path*"];
-const userRoutes = ["/home"];
+const publicRoutes = ["/auth/register", "/auth/login", "/", "/home"];
+const protectedRoutes = ["/super-admin"];
+const superAdminRoutes = ["/super-admin"];
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
@@ -33,15 +33,15 @@ export async function middleware(request: NextRequest) {
         );
       }
 
-      if (
-        role === "SUPER_ADMIN" &&
-        userRoutes.some((route) => pathname.startsWith(route))
-      ) {
+      // Redirect super admin users away from regular user pages to admin panel
+      if (role === "SUPER_ADMIN" && pathname === "/home") {
         return NextResponse.redirect(new URL("/super-admin", request.url));
       }
+      
+      // Block non-super-admin users from admin routes
       if (
         role !== "SUPER_ADMIN" &&
-        superAdminRoutes.some((route) => pathname.startsWith(route))
+        superAdminRoutes.some((route: string) => pathname.startsWith(route))
       ) {
         return NextResponse.redirect(new URL("/home", request.url));
       }
@@ -49,34 +49,14 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     } catch (e) {
       console.error("Token verification failed", e);
-      const refreshResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/refresh-token`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
-
-      if (refreshResponse.ok) {
-        const response = NextResponse.next();
-        response.cookies.set(
-          "accessToken",
-          refreshResponse.headers.get("Set-Cookie") || ""
-        );
-        return response;
-      } else {
-        //ur refresh is also failed
-        const response = NextResponse.redirect(
-          new URL("/auth/login", request.url)
-        );
-        response.cookies.delete("accessToken");
-        response.cookies.delete("refreshToken");
-        return response;
-      }
+      // For cross-origin setup, just allow access if token verification fails
+      // The backend will handle authentication for API calls
+      return NextResponse.next();
     }
   }
 
-  if (!publicRoutes.includes(pathname)) {
+  // Only redirect to login for protected routes when no token is present
+  if (protectedRoutes.some((route: string) => pathname.startsWith(route))) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
