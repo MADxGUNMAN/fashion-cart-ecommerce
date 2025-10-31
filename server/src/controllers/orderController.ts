@@ -11,6 +11,10 @@ const PAYPAL_ENVIRONMENT = process.env.PAYPAL_ENVIRONMENT || "sandbox"; // sandb
 
 async function getPaypalAccessToken() {
   if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+    console.error("PayPal credentials missing:", {
+      clientId: !!PAYPAL_CLIENT_ID,
+      clientSecret: !!PAYPAL_CLIENT_SECRET
+    });
     throw new Error("PayPal credentials not configured in environment variables");
   }
   
@@ -18,20 +22,28 @@ async function getPaypalAccessToken() {
     ? "https://api-m.paypal.com" 
     : "https://api-m.sandbox.paypal.com";
   
-  const response = await axios.post(
-    `${baseUrl}/v1/oauth2/token`,
-    "grant_type=client_credentials",
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${Buffer.from(
-          `${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`
-        ).toString("base64")}`,
-      },
-    }
-  );
+  try {
+    console.log("Requesting PayPal access token from:", `${baseUrl}/v1/oauth2/token`);
+    
+    const response = await axios.post(
+      `${baseUrl}/v1/oauth2/token`,
+      "grant_type=client_credentials",
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${Buffer.from(
+            `${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`
+          ).toString("base64")}`,
+        },
+      }
+    );
 
-  return response.data.access_token;
+    console.log("PayPal access token obtained successfully");
+    return response.data.access_token;
+  } catch (error: any) {
+    console.error("PayPal access token error:", error.response?.data || error.message);
+    throw new Error(`Failed to get PayPal access token: ${error.response?.data?.error_description || error.message}`);
+  }
 }
 
 export const createPaypalOrder = async (
@@ -41,6 +53,15 @@ export const createPaypalOrder = async (
 ): Promise<void> => {
   try {
     const { items, total } = req.body;
+    
+    // Debug logging
+    console.log("PayPal Order Creation - Request Body:", { items, total });
+    console.log("PayPal Credentials Check:", {
+      clientId: PAYPAL_CLIENT_ID ? "Set" : "Missing",
+      clientSecret: PAYPAL_CLIENT_SECRET ? "Set" : "Missing",
+      environment: PAYPAL_ENVIRONMENT
+    });
+    
     const accessToken = await getPaypalAccessToken();
 
     const baseUrl = PAYPAL_ENVIRONMENT === "live" 
