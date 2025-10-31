@@ -6,7 +6,7 @@ import CheckoutSuspense from "./checkoutSkeleton";
 function CheckoutPage() {
   const options = {
     clientId:
-      "AU0gBSY59do5jZuQ87pfZKaRe-pH8Vp8dteV4c4UMBNF2rPsArl6AaEhb3csfAXwSKzaY6swhcMBSiFk",
+      "AYYtmQuBVHm_q4fO-nRv84xIKhQk1-BdhSLckYRxcBJLhxI5EcxafPKdkvKpqLDP-pNLNXalxvlUSgZE",
   };
 
   return (

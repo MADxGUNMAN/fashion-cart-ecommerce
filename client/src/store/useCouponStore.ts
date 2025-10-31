@@ -1,7 +1,6 @@
 import { API_ROUTES } from "@/utils/api";
 import axios from "axios";
 import { create } from "zustand";
-import { useAuthStore } from "./useAuthStore";
 
 export interface Coupon {
   id: string;
@@ -31,10 +30,9 @@ export const useCouponStore = create<CouponStore>((set, get) => ({
   fetchCoupons: async () => {
     set({ isLoading: true, error: null });
     try {
-      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(
         `${API_ROUTES.COUPON}/fetch-all-coupons`,
-        { withCredentials: true, headers: authHeaders }
+        { withCredentials: true }
       );
       set({ couponList: response.data.couponList, isLoading: false });
     } catch (e) {
@@ -44,11 +42,10 @@ export const useCouponStore = create<CouponStore>((set, get) => ({
   createCoupon: async (coupon) => {
     set({ isLoading: true, error: null });
     try {
-      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.COUPON}/create-coupon`,
         coupon,
-        { withCredentials: true, headers: authHeaders }
+        { withCredentials: true }
       );
 
       set({ isLoading: false });
@@ -61,10 +58,8 @@ export const useCouponStore = create<CouponStore>((set, get) => ({
   deleteCoupon: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
-      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.delete(`${API_ROUTES.COUPON}/${id}`, {
         withCredentials: true,
-        headers: authHeaders,
       });
       set({ isLoading: false });
       return response.data.success;
