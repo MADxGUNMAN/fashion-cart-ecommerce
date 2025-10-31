@@ -49,20 +49,16 @@ function LoginPage() {
         title: "Login Successfull!",
       });
       
-      // Wait a moment for auth state to be fully updated
-      setTimeout(() => {
-        const { user } = useAuthStore.getState();
-        console.log("User after login:", user);
-        console.log("User role:", user?.role);
-        
-        const targetPath = user?.role === "SUPER_ADMIN" ? "/super-admin" : "/";
-        console.log("Redirecting to:", targetPath);
-        console.log("Current URL:", window.location.href);
-        
-        // Use window.location for reliable redirect
-        console.log("Executing redirect...");
-        window.location.href = targetPath;
-      }, 500); // Give more time for state to update
+      // Get user data and redirect immediately
+      const { user } = useAuthStore.getState();
+      console.log("User after login:", user);
+      console.log("User role:", user?.role);
+      
+      const targetPath = user?.role === "SUPER_ADMIN" ? "/super-admin" : "/";
+      console.log("Redirecting to:", targetPath);
+      
+      // Use window.location for reliable redirect
+      window.location.href = targetPath;
     } else {
       console.log("Login failed");
     }

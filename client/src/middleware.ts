@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const publicRoutes = ["/auth/register", "/auth/login"];
+const publicRoutes = ["/auth/register", "/auth/login", "/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms"];
 const superAdminRoutes = ["/super-admin"];
 const userRoutes = ["/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms"];
-const allProtectedRoutes = [...superAdminRoutes, ...userRoutes];
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
@@ -20,28 +19,29 @@ export async function middleware(request: NextRequest) {
         role: string;
       };
 
-      // Redirect authenticated users away from auth pages
       if (publicRoutes.includes(pathname)) {
         return NextResponse.redirect(
           new URL(
-            role === "SUPER_ADMIN" ? "/super-admin" : "/",
+            role === "SUPER_ADMIN" ? "/super-admin" : "/home",
             request.url
           )
         );
       }
 
-      // Check if user has permission for the route
-      if (role === "SUPER_ADMIN") {
-        // Super admin can access all routes
-        return NextResponse.next();
-      } else {
-        // Regular users cannot access super-admin routes
-        if (pathname.startsWith("/super-admin")) {
-          return NextResponse.redirect(new URL("/", request.url));
-        }
-        // Regular users can access user routes
-        return NextResponse.next();
+      if (
+        role === "SUPER_ADMIN" &&
+        userRoutes.some((route) => pathname.startsWith(route))
+      ) {
+        return NextResponse.redirect(new URL("/super-admin", request.url));
       }
+      if (
+        role !== "SUPER_ADMIN" &&
+        superAdminRoutes.some((route) => pathname.startsWith(route))
+      ) {
+        return NextResponse.redirect(new URL("/home", request.url));
+      }
+
+      return NextResponse.next();
     } catch (e) {
       console.error("Token verification failed", e);
       const refreshResponse = await fetch(
