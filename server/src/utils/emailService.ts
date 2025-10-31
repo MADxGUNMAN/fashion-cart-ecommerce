@@ -20,13 +20,8 @@ const transporter = createTransporter();
 
 // Verify transporter configuration only if transporter exists
 if (transporter) {
-  transporter.verify((error: any, success: any) => {
-    if (error) {
-      console.error('Email transporter error:', error);
-    } else {
-      console.log('Email server is ready to send messages');
-    }
-  });
+  // Skip verification to prevent timeout on startup
+  console.log('Email transporter configured - verification skipped');
 }
 
 interface EmailOptions {
