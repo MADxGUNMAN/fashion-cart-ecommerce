@@ -24,6 +24,14 @@ export const createProduct = async (
       stock,
     } = req.body;
 
+    console.log(req.body, "req.body");
+
+    // Validate required fields
+    if (!name || name.trim() === '') {
+      res.status(400).json({ success: false, message: "Product name is required" });
+      return;
+    }
+
     const files = req.files as Express.Multer.File[];
 
     //upload all images to cloudinary

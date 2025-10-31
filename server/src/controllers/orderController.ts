@@ -61,6 +61,16 @@ export const createPaypalOrder = async (
       clientSecret: PAYPAL_CLIENT_SECRET ? "Set" : "Missing",
       environment: PAYPAL_ENVIRONMENT
     });
+
+    // Validate cart is not empty
+    if (!items || items.length === 0 || total <= 0) {
+      res.status(400).json({
+        success: false,
+        message: "Cart is empty or total is zero. Cannot create PayPal order.",
+        error: "EMPTY_CART"
+      });
+      return;
+    }
     
     const accessToken = await getPaypalAccessToken();
 

@@ -12,7 +12,7 @@ function generateToken(userId: string, email: string, role: string) {
       role,
     },
     process.env.JWT_SECRET!,
-    { expiresIn: "60m" }
+    { expiresIn: "24h" }
   );
   const refreshToken = uuidv4();
   return { accessToken, refreshToken };
