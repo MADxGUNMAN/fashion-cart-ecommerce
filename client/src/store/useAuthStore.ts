@@ -12,6 +12,7 @@ type User = {
 
 type AuthStore = {
   user: User | null;
+  accessToken: string | null;
   isLoading: boolean;
   error: string | null;
   register: (
@@ -22,6 +23,7 @@ type AuthStore = {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<Boolean>;
+  getAuthHeaders: () => Record<string, string>;
 };
 
 const axiosInstance = axios.create({
@@ -33,6 +35,7 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
       user: null,
+      accessToken: null,
       isLoading: false,
       error: null,
       register: async (name, email, password) => {
@@ -100,6 +103,14 @@ export const useAuthStore = create<AuthStore>()(
           console.error(e);
           return false;
         }
+      },
+      getAuthHeaders: () => {
+        const { accessToken } = get();
+        const headers: Record<string, string> = {};
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
+        }
+        return headers;
       },
     }),
     {

@@ -14,7 +14,16 @@ export const authenticateJwt = (
   res: Response,
   next: NextFunction
 ) => {
-  const accessToken = req.cookies.accessToken;
+  // Try to get token from cookies first, then from Authorization header
+  let accessToken = req.cookies.accessToken;
+  
+  if (!accessToken) {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      accessToken = authHeader.substring(7);
+    }
+  }
+  
   if (!accessToken) {
     res
       .status(401)
