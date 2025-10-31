@@ -1,6 +1,7 @@
 import { API_ROUTES } from "@/utils/api";
 import axios from "axios";
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 export interface Address {
   id: string;
@@ -33,8 +34,10 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
   fetchAddresses: async () => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(`${API_ROUTES.ADDRESS}/get-address`, {
         withCredentials: true,
+        headers: authHeaders,
       });
 
       set({ addresses: response.data.address, isLoading: false });
@@ -50,6 +53,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
         address,
         {
           withCredentials: true,
+          headers: useAuthStore.getState().getAuthHeaders(),
         }
       );
 
@@ -73,6 +77,7 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
         address,
         {
           withCredentials: true,
+          headers: useAuthStore.getState().getAuthHeaders(),
         }
       );
 
@@ -93,8 +98,10 @@ export const useAddressStore = create<AddressStore>((set, get) => ({
   deleteAddress: async (id) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       await axios.delete(`${API_ROUTES.ADDRESS}/delete-address/${id}`, {
         withCredentials: true,
+        headers: authHeaders,
       });
 
       set((state) => ({

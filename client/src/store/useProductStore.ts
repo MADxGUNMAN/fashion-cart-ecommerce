@@ -151,11 +151,13 @@ export const useProductStore = create<ProductState>((set, get) => ({
         brands: params.brands?.join(","),
       };
 
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(
         `${API_ROUTES.PRODUCTS}/fetch-client-products`,
         {
           params: queryParams,
           withCredentials: true,
+          headers: authHeaders,
         }
       );
 

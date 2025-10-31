@@ -1,6 +1,7 @@
 import { API_ROUTES } from "@/utils/api";
 import axios from "axios";
 import { create } from "zustand";
+import { useAuthStore } from "./useAuthStore";
 
 interface OrderItem {
   id: string;
@@ -94,10 +95,11 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   createPayPalOrder: async (items, total) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.ORDER}/create-paypal-order`,
         { items, total },
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set({ isLoading: false });
       return response.data.id;
@@ -109,10 +111,11 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   capturePayPalOrder: async (orderId) => {
     set({ isLoading: true, error: null, isPaymentProcessing: true });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.ORDER}/capture-paypal-order`,
         { orderId },
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set({ isLoading: false, isPaymentProcessing: false });
       return response.data;
@@ -128,10 +131,11 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   createFinalOrder: async (orderData) => {
     set({ isLoading: true, error: null, isPaymentProcessing: true });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.ORDER}/create-final-order`,
         orderData,
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set({
         isLoading: false,
@@ -151,10 +155,11 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   createCODOrder: async (orderData) => {
     set({ isLoading: true, error: null, isPaymentProcessing: true });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.post(
         `${API_ROUTES.ORDER}/create-cod-order`,
         orderData,
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set({
         isLoading: false,
@@ -175,10 +180,11 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   updateOrderStatus: async (orderId, status) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       await axios.put(
         `${API_ROUTES.ORDER}/${orderId}/status`,
         { status },
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set((state) => ({
         currentOrder:
@@ -207,10 +213,11 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   updatePaymentStatus: async (orderId, paymentStatus) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       await axios.put(
         `${API_ROUTES.ORDER}/${orderId}/payment-status`,
         { paymentStatus },
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set((state) => ({
         currentOrder:
@@ -239,9 +246,10 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   getAllOrders: async () => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(
         `${API_ROUTES.ORDER}/get-all-orders-for-admin`,
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set({ isLoading: false, adminOrders: response.data });
       return response.data;
@@ -253,9 +261,10 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   getOrdersByUserId: async () => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(
         `${API_ROUTES.ORDER}/get-order-by-user-id`,
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set({ isLoading: false, userOrders: response.data });
       return response.data;
@@ -268,9 +277,10 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   getOrder: async (orderId) => {
     set({ isLoading: true, error: null });
     try {
+      const authHeaders = useAuthStore.getState().getAuthHeaders();
       const response = await axios.get(
         `${API_ROUTES.ORDER}/get-single-order/${orderId}`,
-        { withCredentials: true }
+        { withCredentials: true, headers: authHeaders }
       );
       set({ isLoading: false, currentOrder: response.data });
       return response.data;
