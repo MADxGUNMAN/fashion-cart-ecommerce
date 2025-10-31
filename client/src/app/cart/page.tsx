@@ -42,7 +42,7 @@ function UserCartPage() {
     0
   );
 
-  if (isLoading || !user) return null;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><div>Loading...</div></div>;
 
   return (
     <div className="min-h-screen bg-white py-8">
@@ -135,10 +135,16 @@ function UserCartPage() {
               <span className="font-bold ml-4">{formatPrice(total)}</span>
             </div>
             <Button
-              onClick={() => router.push("/checkout")}
+              onClick={() => {
+                if (!user) {
+                  router.push("/auth/login");
+                } else {
+                  router.push("/checkout");
+                }
+              }}
               className="w-full bg-black text-white"
             >
-              PROCEED TO CHECKOUT
+              {!user ? "LOGIN TO CHECKOUT" : "PROCEED TO CHECKOUT"}
             </Button>
             <Button
               onClick={() => router.push("/listing")}

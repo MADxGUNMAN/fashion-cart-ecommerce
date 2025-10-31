@@ -74,6 +74,36 @@ export const useAuthStore = create<AuthStore>()(
             user: response.data.user,
             accessToken: response.data.accessToken 
           });
+          
+          // Migrate guest cart to user cart after successful login
+          const guestCart = localStorage.getItem('guest-cart');
+          if (guestCart) {
+            try {
+              const guestItems = JSON.parse(guestCart);
+              if (guestItems.length > 0) {
+                // Import cart items to user's cart
+                for (const item of guestItems) {
+                  await axiosInstance.post("/cart/add-to-cart", {
+                    productId: item.productId,
+                    name: item.name,
+                    price: item.price,
+                    image: item.image,
+                    color: item.color,
+                    size: item.size,
+                    quantity: item.quantity,
+                  }, {
+                    withCredentials: true,
+                    headers: { Authorization: `Bearer ${response.data.accessToken}` }
+                  });
+                }
+                // Clear guest cart after migration
+                localStorage.removeItem('guest-cart');
+              }
+            } catch (cartError) {
+              console.error('Failed to migrate guest cart:', cartError);
+            }
+          }
+          
           return true;
         } catch (error) {
           set({
