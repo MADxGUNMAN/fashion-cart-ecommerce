@@ -52,7 +52,15 @@ export const useCartStore = create<CartStore>((set, get) => {
     fetchCart: async () => {
       set({ isLoading: true, error: null });
       try {
-        const authHeaders = useAuthStore.getState().getAuthHeaders();
+        const authStore = useAuthStore.getState();
+        
+        // Check token validity first
+        if (!authStore.checkTokenValidity()) {
+          set({ error: "Please login again", isLoading: false });
+          return;
+        }
+        
+        const authHeaders = authStore.getAuthHeaders();
         const response = await axios.get(`${API_ROUTES.CART}/fetch-cart`, {
           withCredentials: true,
           headers: authHeaders,

@@ -24,6 +24,7 @@ type AuthStore = {
   logout: () => Promise<void>;
   refreshAccessToken: () => Promise<Boolean>;
   getAuthHeaders: () => Record<string, string>;
+  checkTokenValidity: () => boolean;
 };
 
 const axiosInstance = axios.create({
@@ -115,6 +116,27 @@ export const useAuthStore = create<AuthStore>()(
           headers.Authorization = `Bearer ${accessToken}`;
         }
         return headers;
+      },
+      checkTokenValidity: () => {
+        const { accessToken } = get();
+        if (!accessToken) return false;
+        
+        try {
+          // Decode JWT token to check expiration
+          const payload = JSON.parse(atob(accessToken.split('.')[1]));
+          const currentTime = Date.now() / 1000;
+          
+          if (payload.exp < currentTime) {
+            // Token expired, logout user
+            get().logout();
+            return false;
+          }
+          return true;
+        } catch (error) {
+          // Invalid token, logout user
+          get().logout();
+          return false;
+        }
       },
     }),
     {
