@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const publicRoutes = ["/auth/register", "/auth/login", "/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms"];
+const publicRoutes = ["/auth/register", "/auth/login", "/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms", "/super-admin"];
 const superAdminRoutes = ["/super-admin"];
 const userRoutes = ["/", "/home", "/listing", "/cart", "/checkout", "/account", "/terms"];
 
 export async function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get("accessToken")?.value;
+  // Try to get token from cookies first, then from Authorization header
+  let accessToken = request.cookies.get("accessToken")?.value;
+  
+  // If no cookie token, try Authorization header
+  if (!accessToken) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      accessToken = authHeader.substring(7);
+    }
+  }
+  
   const { pathname } = request.nextUrl;
 
   if (accessToken) {

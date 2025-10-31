@@ -3,10 +3,26 @@
 import SuperAdminSidebar from "@/components/super-admin/sidebar";
 import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { user } = useAuthStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is authenticated and has SUPER_ADMIN role
+    if (!user || user.role !== "SUPER_ADMIN") {
+      router.push("/auth/login");
+    }
+  }, [user, router]);
+
+  // Show loading or redirect if not authorized
+  if (!user || user.role !== "SUPER_ADMIN") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
