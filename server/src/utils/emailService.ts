@@ -1,22 +1,33 @@
 import nodemailer from 'nodemailer';
 
-// Create transporter using Gmail
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// Verify transporter configuration
-transporter.verify((error: any, success: any) => {
-  if (error) {
-    console.error('Email transporter error:', error);
-  } else {
-    console.log('Email server is ready to send messages');
+// Create transporter using Gmail only if credentials are available
+const createTransporter = () => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log('Email credentials not configured - email service disabled');
+    return null;
   }
-});
+
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+};
+
+const transporter = createTransporter();
+
+// Verify transporter configuration only if transporter exists
+if (transporter) {
+  transporter.verify((error: any, success: any) => {
+    if (error) {
+      console.error('Email transporter error:', error);
+    } else {
+      console.log('Email server is ready to send messages');
+    }
+  });
+}
 
 interface EmailOptions {
   to: string;
@@ -27,6 +38,11 @@ interface EmailOptions {
 
 export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
   try {
+    if (!transporter) {
+      console.log('Email service not configured - skipping email send');
+      return false;
+    }
+
     const mailOptions = {
       from: `"Your E-commerce Store" <${process.env.EMAIL_USER}>`,
       to: options.to,
