@@ -9,10 +9,27 @@ export const createCoupon = async (
   try {
     const { code, discountPercent, startDate, endDate, usageLimit } = req.body;
 
+    // Validation
+    if (!code || !discountPercent || !startDate || !endDate || !usageLimit) {
+      res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+      return;
+    }
+
+    if (new Date(endDate) <= new Date(startDate)) {
+      res.status(400).json({
+        success: false,
+        message: "End date must be after start date",
+      });
+      return;
+    }
+
     const newlyCreatedCoupon = await prisma.coupon.create({
       data: {
         code,
-        discountPercent: parseInt(discountPercent),
+        discountPercent: parseFloat(discountPercent),
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         usageLimit: parseInt(usageLimit),
