@@ -155,22 +155,26 @@ function CheckoutContent() {
       const createFinalOrderResponse = await createFinalOrder(orderData);
 
       if (createFinalOrderResponse) {
+        // Immediately reset payment processing state
+        resetPaymentProcessing();
         await clearCart();
         toast({
           title: "Order placed successfully!",
           description: "Your payment has been processed and order has been placed.",
         });
-        // Small delay to ensure state is updated before redirect
-        setTimeout(() => {
-          router.push("/account");
-        }, 500);
+        // Force redirect using replace to prevent back navigation issues
+        router.replace("/account");
       } else {
+        // Reset payment processing state on error
+        resetPaymentProcessing();
         toast({
           title: "There is some error while processing final order",
           variant: "destructive",
         });
       }
     } catch (error) {
+      // Reset payment processing state on error
+      resetPaymentProcessing();
       console.error(error);
       toast({
         title: "There is some error while processing final order",
@@ -216,16 +220,18 @@ function CheckoutContent() {
       const createCODOrderResponse = await createCODOrder(orderData);
 
       if (createCODOrderResponse) {
+        // Immediately reset payment processing state
+        resetPaymentProcessing();
         await clearCart();
         toast({
           title: "Order placed successfully!",
           description: "Your Cash on Delivery order has been placed. Pay when you receive your items.",
         });
-        // Small delay to ensure state is updated before redirect
-        setTimeout(() => {
-          router.push("/account");
-        }, 500);
+        // Force redirect using replace to prevent back navigation issues
+        router.replace("/account");
       } else {
+        // Reset payment processing state on error
+        resetPaymentProcessing();
         console.error("COD Order failed - checking store error:", useOrderStore.getState().error);
         toast({
           title: "Failed to place COD order",
@@ -234,9 +240,12 @@ function CheckoutContent() {
         });
       }
     } catch (error) {
+      // Reset payment processing state on error
+      resetPaymentProcessing();
       console.error(error);
       toast({
-        title: "There was an error placing your order",
+        title: "Failed to place COD order",
+        description: "Please try again.",
         variant: "destructive",
       });
     }
@@ -253,13 +262,35 @@ function CheckoutContent() {
 
   const total = subTotal - discountAmount;
 
+  // Add timeout fallback to prevent infinite loading
+  useEffect(() => {
+    if (isPaymentProcessing) {
+      const timeout = setTimeout(() => {
+        console.warn("Payment processing timeout - forcing reset");
+        resetPaymentProcessing();
+        toast({
+          title: "Payment processing timeout",
+          description: "Redirecting you back to checkout. Please try again.",
+          variant: "destructive",
+        });
+      }, 10000); // 10 second timeout
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isPaymentProcessing, resetPaymentProcessing, toast]);
+
   if (isPaymentProcessing) {
     return (
       <Skeleton className="w-full h-[600px] rounded-xl">
         <div className="h-full flex justify-center items-center">
-          <h1 className="text-3xl font-bold">
-            Processing payment...Please wait!
-          </h1>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-4">
+              Processing payment...Please wait!
+            </h1>
+            <p className="text-gray-600">
+              This should only take a few seconds...
+            </p>
+          </div>
         </div>
       </Skeleton>
     );
