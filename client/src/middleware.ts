@@ -87,7 +87,10 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if route requires authentication
-  if (!publicRoutes.includes(pathname)) {
+  // Allow product detail pages (/listing/[id]) without authentication
+  const isProductDetailPage = pathname.startsWith("/listing/") && pathname !== "/listing";
+  
+  if (!publicRoutes.includes(pathname) && !isProductDetailPage) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
