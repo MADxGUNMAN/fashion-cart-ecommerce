@@ -14,12 +14,28 @@ interface QuickViewModalProps {
 }
 
 export default function QuickViewModal({ open, onOpenChange, product }: QuickViewModalProps) {
-  const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || "");
-  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || "");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCartStore();
 
+  // Reset selections when product changes
+  useState(() => {
+    if (product?.colors?.length > 0) {
+      setSelectedColor(product.colors[0]);
+    }
+    if (product?.sizes?.length > 0) {
+      setSelectedSize(product.sizes[0]);
+    }
+    setQuantity(1);
+  });
+
   if (!product) return null;
+
+  // Ensure product has required arrays
+  const colors = product.colors || [];
+  const sizes = product.sizes || [];
+  const images = product.images || [];
 
   const handleAddToCart = async () => {
     if (product.stock === 0) {
@@ -36,7 +52,7 @@ export default function QuickViewModal({ open, onOpenChange, product }: QuickVie
         productId: product.id,
         name: product.name,
         price: parseFloat(product.price),
-        image: product.images[0],
+        image: images[0] || '',
         color: selectedColor,
         size: selectedSize,
         quantity,
@@ -59,14 +75,14 @@ export default function QuickViewModal({ open, onOpenChange, product }: QuickVie
           <div className="space-y-4">
             <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
               <img
-                src={product.images[0]}
+                src={images[0] || '/placeholder-image.jpg'}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
-            {product.images.length > 1 && (
+            {images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
-                {product.images.slice(1).map((image: string, index: number) => (
+                {images.slice(1).map((image: string, index: number) => (
                   <div key={index} className="aspect-square bg-gray-100 rounded overflow-hidden">
                     <img
                       src={image}
@@ -89,41 +105,45 @@ export default function QuickViewModal({ open, onOpenChange, product }: QuickVie
             </div>
 
             {/* Color Selection */}
-            <div>
-              <h3 className="font-medium mb-2">Color: {selectedColor}</h3>
-              <div className="flex gap-2">
-                {product.colors.map((color: string, index: number) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedColor(color)}
-                    className={`w-10 h-10 rounded-full border-2 ${
-                      selectedColor === color ? "border-black" : "border-gray-300"
-                    }`}
-                    style={{ backgroundColor: color.toLowerCase() }}
-                  />
-                ))}
+            {colors.length > 0 && (
+              <div>
+                <h3 className="font-medium mb-2">Color: {selectedColor}</h3>
+                <div className="flex gap-2">
+                  {colors.map((color: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedColor(color)}
+                      className={`w-10 h-10 rounded-full border-2 ${
+                        selectedColor === color ? "border-black" : "border-gray-300"
+                      }`}
+                      style={{ backgroundColor: color.toLowerCase() }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Size Selection */}
-            <div>
-              <h3 className="font-medium mb-2">Size: {selectedSize}</h3>
-              <div className="flex gap-2">
-                {product.sizes.map((size: string, index: number) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 border rounded ${
-                      selectedSize === size
-                        ? "border-black bg-black text-white"
-                        : "border-gray-300 hover:border-gray-400"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+            {sizes.length > 0 && (
+              <div>
+                <h3 className="font-medium mb-2">Size: {selectedSize}</h3>
+                <div className="flex gap-2">
+                  {sizes.map((size: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-4 py-2 border rounded ${
+                        selectedSize === size
+                          ? "border-black bg-black text-white"
+                          : "border-gray-300 hover:border-gray-400"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div>
@@ -155,7 +175,11 @@ export default function QuickViewModal({ open, onOpenChange, product }: QuickVie
               className={product.stock === 0 
                 ? "w-full bg-gray-400 text-white cursor-not-allowed" 
                 : "w-full bg-black text-white hover:bg-gray-800"}
-              disabled={!selectedColor || !selectedSize || product.stock === 0}
+              disabled={
+                product.stock === 0 || 
+                (colors.length > 0 && !selectedColor) || 
+                (sizes.length > 0 && !selectedSize)
+              }
             >
               <ShoppingCart className="h-4 w-4 mr-2" />
               {product.stock === 0 ? "Out of Stock" : "Add to Cart"}

@@ -176,7 +176,10 @@ function HomePage() {
                     <p className="text-sm">{formatPrice(parseFloat(productItem.price))}</p>
                     <Button 
                       className="mt-4 bg-white text-black hover:bg-gray-100"
-                      onClick={() => handleQuickView(productItem)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleQuickView(productItem);
+                      }}
                       disabled={productItem.stock === 0}
                     >
                       {productItem.stock === 0 ? "OUT OF STOCK" : "QUICK VIEW"}

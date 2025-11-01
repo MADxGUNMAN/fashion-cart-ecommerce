@@ -311,7 +311,10 @@ function ProductListingPage() {
                       <div className="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <Button 
                           className="bg-white text-black hover:bg-gray-100"
-                          onClick={() => handleQuickView(productItem)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleQuickView(productItem);
+                          }}
                           disabled={productItem.stock === 0}
                         >
                           {productItem.stock === 0 ? "Out of Stock" : "Quick View"}
