@@ -49,9 +49,7 @@ function CheckoutContent() {
     fetchCoupons();
     fetchAddresses();
     fetchCart();
-    // Reset payment processing state when component mounts
-    resetPaymentProcessing();
-  }, [fetchAddresses, fetchCart, fetchCoupons, resetPaymentProcessing]);
+  }, [fetchAddresses, fetchCart, fetchCoupons]);
 
   useEffect(() => {
     const findDefaultAddress = addresses.find((address) => address.isDefault);
@@ -162,8 +160,10 @@ function CheckoutContent() {
           title: "Order placed successfully!",
           description: "Your payment has been processed and order has been placed.",
         });
-        // Force redirect using replace to prevent back navigation issues
-        router.replace("/account");
+        // Small delay to ensure state is updated before redirect
+        setTimeout(() => {
+          router.replace("/account");
+        }, 300);
       } else {
         // Reset payment processing state on error
         resetPaymentProcessing();
@@ -227,8 +227,10 @@ function CheckoutContent() {
           title: "Order placed successfully!",
           description: "Your Cash on Delivery order has been placed. Pay when you receive your items.",
         });
-        // Force redirect using replace to prevent back navigation issues
-        router.replace("/account");
+        // Small delay to ensure state is updated before redirect
+        setTimeout(() => {
+          router.replace("/account");
+        }, 300);
       } else {
         // Reset payment processing state on error
         resetPaymentProcessing();
@@ -262,22 +264,7 @@ function CheckoutContent() {
 
   const total = subTotal - discountAmount;
 
-  // Add timeout fallback to prevent infinite loading
-  useEffect(() => {
-    if (isPaymentProcessing) {
-      const timeout = setTimeout(() => {
-        console.warn("Payment processing timeout - forcing reset");
-        resetPaymentProcessing();
-        toast({
-          title: "Payment processing timeout",
-          description: "Redirecting you back to checkout. Please try again.",
-          variant: "destructive",
-        });
-      }, 10000); // 10 second timeout
-
-      return () => clearTimeout(timeout);
-    }
-  }, [isPaymentProcessing, resetPaymentProcessing, toast]);
+  // Remove the aggressive timeout that was interfering with normal payment processing
 
   if (isPaymentProcessing) {
     return (

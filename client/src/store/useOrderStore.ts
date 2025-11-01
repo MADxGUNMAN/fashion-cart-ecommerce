@@ -139,18 +139,13 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         { withCredentials: true, headers: authHeaders }
       );
       
-      // Ensure payment processing is reset immediately and force state update
+      // Ensure payment processing is reset immediately
       set({
         isLoading: false,
         currentOrder: response.data,
         isPaymentProcessing: false,
         error: null,
       });
-      
-      // Double-check state reset with a small delay
-      setTimeout(() => {
-        set((state) => ({ ...state, isPaymentProcessing: false }));
-      }, 100);
       
       return response.data;
     } catch (error) {
@@ -173,18 +168,13 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         { withCredentials: true, headers: authHeaders }
       );
       
-      // Ensure payment processing is reset immediately and force state update
+      // Ensure payment processing is reset immediately
       set({
         isLoading: false,
         currentOrder: response.data.order,
         isPaymentProcessing: false,
         error: null,
       });
-      
-      // Double-check state reset with a small delay
-      setTimeout(() => {
-        set((state) => ({ ...state, isPaymentProcessing: false }));
-      }, 100);
       
       return response.data.order;
     } catch (error) {
