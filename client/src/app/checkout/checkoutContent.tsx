@@ -40,6 +40,7 @@ function CheckoutContent() {
     createFinalOrder,
     createCODOrder,
     isPaymentProcessing,
+    resetPaymentProcessing,
   } = useOrderStore();
   const { user } = useAuthStore();
   const router = useRouter();
@@ -48,7 +49,9 @@ function CheckoutContent() {
     fetchCoupons();
     fetchAddresses();
     fetchCart();
-  }, [fetchAddresses, fetchCart, fetchCoupons]);
+    // Reset payment processing state when component mounts
+    resetPaymentProcessing();
+  }, [fetchAddresses, fetchCart, fetchCoupons, resetPaymentProcessing]);
 
   useEffect(() => {
     const findDefaultAddress = addresses.find((address) => address.isDefault);
@@ -153,7 +156,14 @@ function CheckoutContent() {
 
       if (createFinalOrderResponse) {
         await clearCart();
-        router.push("/account");
+        toast({
+          title: "Order placed successfully!",
+          description: "Your payment has been processed and order has been placed.",
+        });
+        // Small delay to ensure state is updated before redirect
+        setTimeout(() => {
+          router.push("/account");
+        }, 500);
       } else {
         toast({
           title: "There is some error while processing final order",
@@ -211,7 +221,10 @@ function CheckoutContent() {
           title: "Order placed successfully!",
           description: "Your Cash on Delivery order has been placed. Pay when you receive your items.",
         });
-        router.push("/account");
+        // Small delay to ensure state is updated before redirect
+        setTimeout(() => {
+          router.push("/account");
+        }, 500);
       } else {
         console.error("COD Order failed - checking store error:", useOrderStore.getState().error);
         toast({

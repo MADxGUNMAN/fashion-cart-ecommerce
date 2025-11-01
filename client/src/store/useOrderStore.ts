@@ -83,6 +83,7 @@ interface OrderStore {
   getAllOrders: () => Promise<Order[] | null>;
   getOrdersByUserId: () => Promise<Order[] | null>;
   setCurrentOrder: (order: Order | null) => void;
+  resetPaymentProcessing: () => void;
 }
 
 export const useOrderStore = create<OrderStore>((set, get) => ({
@@ -137,15 +138,20 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         orderData,
         { withCredentials: true, headers: authHeaders }
       );
+      
+      // Ensure payment processing is reset immediately
       set({
         isLoading: false,
         currentOrder: response.data,
         isPaymentProcessing: false,
+        error: null,
       });
+      
       return response.data;
     } catch (error) {
+      console.error("Final order creation error:", error);
       set({
-        error: "Failed to capture paypal order",
+        error: "Failed to create final order",
         isLoading: false,
         isPaymentProcessing: false,
       });
@@ -161,11 +167,15 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         orderData,
         { withCredentials: true, headers: authHeaders }
       );
+      
+      // Ensure payment processing is reset immediately
       set({
         isLoading: false,
         currentOrder: response.data.order,
         isPaymentProcessing: false,
+        error: null,
       });
+      
       return response.data.order;
     } catch (error) {
       console.error("COD Order Creation Error:", error);
@@ -288,5 +298,8 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
       set({ error: "Failed to fetch all orders for admin", isLoading: false });
       return null;
     }
+  },
+  resetPaymentProcessing: () => {
+    set({ isPaymentProcessing: false, error: null });
   },
 }));
