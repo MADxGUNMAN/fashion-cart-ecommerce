@@ -3,7 +3,6 @@
 import { ArrowLeft, Menu, ShoppingBag, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -132,13 +131,9 @@ function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           <Link className="flex items-center space-x-2 hover:scale-105 transition-transform duration-200 -ml-15" href="/">
-            <Image 
-              src="/images/fashion-cart-logo-compact.svg" 
-              alt="Fashion Cart Logo" 
-              width={180} 
-              height={45}
-              className="h-12 w-auto drop-shadow-lg"
-            />
+            <h1 className="text-3xl font-bold text-black drop-shadow-lg font-playfair-display">
+              Fashion Cart
+            </h1>
           </Link>
           <div className="hidden lg:flex items-center space-x-8 flex-1 justify-center -ml-24">
             <nav className="flex items-center space-x-8">
@@ -197,13 +192,9 @@ function Header() {
               <SheetContent side="left" className="w-80">
                 <SheetHeader>
                   <SheetTitle className="flex justify-center">
-                    <Image 
-                      src="/images/fashion-cart-logo-compact.svg" 
-                      alt="Fashion Cart Logo" 
-                      width={160} 
-                      height={40}
-                      className="h-10 w-auto"
-                    />
+                    <h1 className="text-2xl font-bold text-black font-playfair-display">
+                      Fashion Cart
+                    </h1>
                   </SheetTitle>
                 </SheetHeader>
                 {renderMobileMenuItems()}

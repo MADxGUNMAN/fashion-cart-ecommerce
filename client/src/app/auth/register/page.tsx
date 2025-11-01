@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import banner from "../../../../public/images/banner2.jpg";
-import logo from "../../../../public/images/logo1.png";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -70,8 +69,10 @@ function Registerpage() {
       </div>
       <div className="w-full lg:w-1/2 flex flex-col p-8 lg:p-16 justify-center">
         <div className="max-w-md w-full mx-auto">
-          <div className="flex justify-center">
-            <Image src={logo} width={200} height={50} alt="Logo" />
+          <div className="flex justify-center mb-6">
+            <h1 className="text-4xl font-bold text-black font-playfair-display">
+              Fashion Cart
+            </h1>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
